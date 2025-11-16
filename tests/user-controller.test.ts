@@ -31,7 +31,7 @@ test.describe("User management API", () => {
     request,
   }) => {
     const nonExistingUserId = 999999999;
-    const getResponse = await request.delete(baseURL + "/" + nonExistingUserId);
+    const getResponse = await request.get(baseURL + "/" + nonExistingUserId);
     expect(getResponse.status()).toBe(404);
   });
 
@@ -52,13 +52,11 @@ test.describe("User management API", () => {
     console.log(await deleteResponse.json());
   });
 
-  test("delete user: should return 404 if user not found", async ({
+    test("delete user: should return 404 if user not found", async ({
     request,
   }) => {
     const nonExistingUserId = 999999999;
-    const deleteResponse = await request.delete(
-      baseURL + "/" + nonExistingUserId,
-    );
+    const deleteResponse = await request.delete(baseURL + "/" + nonExistingUserId);
     expect(deleteResponse.status()).toBe(404);
   });
 
@@ -86,5 +84,10 @@ test.describe("User management API", () => {
       expect.soft(response.status()).toBe(200);
       console.log(`Deleted user with ID: ${userIDs[i]}`);
     }
+  });
+    const deleteResponse = await request.delete(
+      baseURL + "/" + nonExistingUserId,
+    );
+    expect(deleteResponse.status()).toBe(404);
   });
 });
