@@ -1,6 +1,11 @@
 // tests/api.spec.ts
 import { test, expect } from "@playwright/test";
+import { cleanUpUsers } from "../src/helpers/cleanup-helper";
 let baseURL: string = "http://localhost:3000/users";
+
+test.beforeEach(async ({ request }) => {
+  await cleanUpUsers(request);
+});
 
 test.describe("User management API", () => {
   test("all users: should return empty array when no users", async ({
@@ -55,5 +60,31 @@ test.describe("User management API", () => {
       baseURL + "/" + nonExistingUserId,
     );
     expect(deleteResponse.status()).toBe(404);
+  });
+
+  test("get user ID information", async ({ request }) => {
+    const responseAllUsers = await request.get(`${baseURL}`);
+    const responseUsers = await responseAllUsers.json();
+    const numberOfObjects = responseUsers.length;
+    console.log("Number of objects: " + numberOfObjects);
+
+    // create an empty array to store all user ID
+    let userIDs = [];
+
+    // loop through all users and store their ID in an array
+    for (let i = 0; i < numberOfObjects; i++) {
+      // get user ID from the response
+      let userID = responseUsers[i].id;
+      // push is used to add elements to the end of an array
+      userIDs.push(userID);
+    }
+    //for user deletion
+    for (let i = 0; i < numberOfObjects; i++) {
+      // delete user by id
+      let response = await request.delete(`${baseURL}/${userIDs[i]}`);
+      // validate the response status code
+      expect.soft(response.status()).toBe(200);
+      console.log(`Deleted user with ID: ${userIDs[i]}`);
+    }
   });
 });
