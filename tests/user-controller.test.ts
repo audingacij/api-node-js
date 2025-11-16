@@ -56,7 +56,9 @@ test.describe("User management API", () => {
     request,
   }) => {
     const nonExistingUserId = 999999999;
-    const deleteResponse = await request.get(baseURL + "/" + nonExistingUserId);
+    const deleteResponse = await request.delete(
+      baseURL + "/" + nonExistingUserId,
+    );
     expect(deleteResponse.status()).toBe(404);
   });
 
